@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 const Register = () => {
    const [staffRequested, setstaffRequested] = useState('False')
-  const register = ()=>{
-    if(document.getElementById('password').value===document.getElementById('password2').value){
-    let  DATA = {
+  const register =async()=>{
+    if(document.getElementById('password').value===document.getElementById('password2').value){ 
+    let rgisteration = await fetch('http://127.0.0.1:8000/register/',{
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+        body:JSON.stringify({
           first_name:document.getElementById('first_name').value,
           last_name:document.getElementById('last_name').value,
           username:document.getElementById('username').value,
@@ -13,10 +15,13 @@ const Register = () => {
           phone:document.getElementById('phone').value,
           is_staff: 'False',
           staff_requested:staffRequested
-      }; axios.post('http://127.0.0.1:8000/register/',DATA).then((response)=>{alert(response.data.CREATED)})
+       })});
+      let response = await rgisteration.json();
+      console.log(response)
+      alert(response.message);
       window.location.href='login';
     }else{
-      alert('One of the passwords wasnt a math for the other.')
+      alert('One of the passwords wasnt a match for the other.')
      }
 };
  

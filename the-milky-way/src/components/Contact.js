@@ -36,12 +36,12 @@ const Contact = () => {
         <div className="screen-body-item">
           <div className="app-form">
             <div className="app-form-group">
-              <input className="app-form-control" placeholder="NAME" id='NAME'></input>
+              <input className="app-form-control" placeholder={user?(JSON.parse(user).first_name):("NAME")} defaultValue={user?(JSON.parse(user).first_name):("NAME")} id='NAME'></input>
             </div>
             <div className="app-form-group">
               {
                 user ? (
-                  <input className="app-form-control" placeholder={JSON.parse(user).email} value={JSON.parse(user).email} id='EMAIL'></input>
+                  <input className="app-form-control" placeholder={JSON.parse(user).email} defaultValue={JSON.parse(user).email} id='EMAIL'></input>
                 ):(
                   <input className="app-form-control" placeholder="EMAIL" id='EMAIL'></input>
                 )

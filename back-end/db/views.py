@@ -22,6 +22,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['email'] = user.email
         token['is_staff']=user.is_staff
+        token['first_name'] = user.first_name
+        token['last_name']=user.last_name
         return token
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -76,7 +78,7 @@ def forgot_password(r):
                 )  
         SendEmail.send()
         connection.close()        
-        return JsonResponse({'message': 'Chek your Email!'})
+        return JsonResponse({'message': 'Check your Email!'})
         
           
 
@@ -92,19 +94,11 @@ def forgot_password(r):
 def addusers(r):
     try:
         User.objects.get(email=r.data['email'])
-        return JsonResponse({'message':'User Is Already In The System!'})
+        return JsonResponse({'message':'User Is Already In The System!'},safe=False)
     except:
-        pass     
-    if r.data['staff_requested'] == 'True':
-        # subject = 'Staff Status request'
-        # html_message = render_to_string('mail_template.html', {'first_name':r.data['first_name'],'last_name':r.data['first_name'],'email':r.data['email']})
-        # plain_message = strip_tags(html_message)
-        # from_email = settings.DEFAULT_FROM_EMAIL
-        # to = 'kolimoli9@gmail.com' 
-        # mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
-        pass   
+        pass    
     User.objects.create(username=r.data['username'],password=make_password(r.data['password']),email=r.data['email'],is_staff = r.data['is_staff'],first_name=r.data['first_name'],last_name=r.data['last_name'])
-    return JsonResponse({'CREATED':'Welcome!\n U can Login Now !'})
+    return JsonResponse({'message':'Welcome!\n U can Login Now !'},safe=False)
 
 @api_view(['GET','DELETE','PUT'])
 @permission_classes([IsAuthenticated])
@@ -151,8 +145,15 @@ def users(request,id=-1):
 ###########
 #CUSTOMERS#
 ###########
+@api_view(['GET'])
+def QuickGet(r,id):
+    if r.method == 'GET':
+        user = User.objects.get(id=id)
+        customer = Customers.objects.get(user=user)
+        return JsonResponse({'id':customer.id},safe=False)
+
+
 @api_view(['POST','DELETE'])
-@permission_classes([IsAuthenticated])
 def customers(request,id=-1):
     if request.method == 'POST': 
         first_name =request.data['first_name']
@@ -163,12 +164,13 @@ def customers(request,id=-1):
            credit_num =request.data['credit_num']
         except:
             credit_num=0000
-        try:   
-           user_id = request.data['user_id']
+        try:    
+           user = User.objects.get(id=request.data['user_id'])
         except:
-            return  JsonResponse({'POST':"NotRegisterd."}) 
-        Customers.objects.create(first_name=first_name,last_name=last_name,adress=adress,phone = phone,credit_num=credit_num,user=user_id)
-        return JsonResponse({'POST':"CREATED"})
+            return  JsonResponse({'message':"Not Registerd."}) 
+
+        Customers.objects.create(first_name=first_name,last_name=last_name,adress=adress,phone = phone,credit_num=credit_num,user=user)
+        return JsonResponse({'message':"CREATED"})
     
     if request.method == 'DELETE': 
         temp= Customers.objects.get(id = id)
@@ -177,7 +179,7 @@ def customers(request,id=-1):
 
 
 @api_view(['GET','PUT'])
-@permission_classes([IsAuthenticated,IsAdminUser])
+@permission_classes([IsAuthenticated])
 def getupdatecustomers(request,id=-1):
     if request.method == 'GET':    
         if int(id) > -1: 
@@ -326,14 +328,17 @@ def tickets(request,id=-1):
         return JsonResponse({'DELETE':f'ticketID: {id}'})
     
     if request.method == 'POST': 
-        flight_id = request.data['flight_id']
-        customer = Customers.objects.get(id=request.data['customer_id'])
-        flightT = Flights.objects.get(id=flight_id)
-        flightT.tickets_left-=1
-        print('The Flight with changed tickets: ', flightT)
-        flightT.save()
-        Tickets.objects.create(flight=flight_id, customer=customer.id)
-        return JsonResponse({'TicketCreated':f'{customer.id},{flight_id}'})    
+        try:
+           customer = Customers.objects.get(id=request.data['customer_id'])
+        except:
+            return JsonResponse({'message':f'Customer Info is not in the system \n OR \nSomthing else went wrong, try again later.'})  
+        flight = Flights.objects.get(id=request.data['flight_id'])
+        if flight.tickets_left == 0:
+            return JsonResponse({'message':'This flights is SOLD OUT on tickets!'})
+        flight.tickets_left-=1
+        flight.save()
+        Tickets.objects.create(flight=flight, customer=customer)
+        return JsonResponse({'message':'CREATED'})    
 
     if request.method == 'PUT': 
         temp=Tickets.objects.get(id = id)

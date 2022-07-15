@@ -24,9 +24,12 @@ const Login = () => {
             localStorage.setItem("tokenR",JSON.stringify(data.refresh)); 
 			let decodedToken = jwt_decode(data.access) 
 			let user = {
+				id:decodedToken.user_id,
 				username: decodedToken.username,
 				email:decodedToken.email,
-				isStaff:decodedToken.is_staff
+				isStaff:decodedToken.is_staff,
+				first_name:decodedToken.first_name,
+				last_name:decodedToken.last_name
 			}
             setPassword("");
 			setUsername("");

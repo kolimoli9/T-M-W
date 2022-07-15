@@ -10,6 +10,7 @@ import Forgot from "./components/Forgot";
 import Register from "./components/Register";
 import Flights from "./components/Flights";
 import CustomerInput from "./components/CustomerInput";
+import TicketFinal from "./components/TicketFinal";
 export default function App() {
   
   return (
@@ -25,8 +26,8 @@ export default function App() {
           <Route path="register" element={<Register/>}/>
           <Route path="flights" element={<Flights/>}/>
           <Route path="customerInfo" element={<CustomerInput/>}/>
+          <Route path="ticketFinal" element={<TicketFinal/>}/>  
         </Route>
-
       </Routes>                
 
     </BrowserRouter>

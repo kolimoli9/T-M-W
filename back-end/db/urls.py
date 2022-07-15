@@ -25,7 +25,7 @@ urlpatterns = [
     path('customers/',views.customers,name='customers'),
     path('customers/getupdate',views.getupdatecustomers,name='customersaddupdate'),
     path('customers/<int:id>',views.customers,name='customersID'),
-    
+    path('customer-get/<int:id>',views.QuickGet),
     path('getflights/',views.getflights,name='getflights'),
     path('flights/',views.flights,name='flights'),
     path('flights/<int:id>',views.flights,name='flightsID'),

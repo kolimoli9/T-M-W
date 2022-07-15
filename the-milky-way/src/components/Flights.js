@@ -1,5 +1,4 @@
 import React, {  useState } from 'react';
-import axios from 'axios';
 const Flights = () => {
   
 
@@ -13,7 +12,6 @@ const Flights = () => {
         setFlights(response);
         setTable(1)
       }else{
-        console.log('runing')
         return;
       }
     };
@@ -23,15 +21,13 @@ const Flights = () => {
       let user = localStorage.getItem('user')
       console.log(flight)
       // console.log(user)
-      if(user==null){
+      if(user===null){
         alert('You Need To Sign In First !')
         window.location.href = "/login"
       // window.location.href = "/customerInfo";
     }else{
-      return
-    
-    
-    
+      localStorage.setItem('flight',JSON.stringify(flight));
+      window.location.href="/customerInfo"
     };
   };
     
