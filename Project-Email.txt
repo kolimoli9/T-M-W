@@ -1,3 +1,2 @@
 
 email = TheMilkyWaySappurt@gmail.com
-password =8jHzbhms4Wy9kb9

@@ -1,8 +1,10 @@
-#had some progress on the Front-end
-יש הרבה דברים שאני לא יודע לעשות אבל בגדול 
-login ~ V
-show flights ~ V
-need to add customer info before ordering a flight ~ V
-Airline user interface ~ X
-Admin user interface ~ X
-how to pass parameter:"user" between components ~ X
+"# T-M-W"
+
+
+echo "# T-M-W" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/kolimoli9/T-M-W.git
+git push -u origin main
