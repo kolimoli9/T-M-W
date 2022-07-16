@@ -18,15 +18,13 @@ const Flights = () => {
     getFlights();
    
     const orderNow = async (flight)=>{
-      let user = localStorage.getItem('user')
-      console.log(flight)
-      // console.log(user)
+      const user = localStorage.getItem('user')
       if(user===null){
         alert('You Need To Sign In First !')
         window.location.href = "/login"
       // window.location.href = "/customerInfo";
-    }else{
-      localStorage.setItem('flight',JSON.stringify(flight));
+    }else{     
+      localStorage.setItem('flight',JSON.stringify(flight))
       window.location.href="/customerInfo"
     };
   };

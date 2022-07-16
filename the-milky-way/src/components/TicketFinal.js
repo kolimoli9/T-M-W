@@ -5,7 +5,7 @@ const TicketFinal = () => {
     const flight = JSON.parse(localStorage.getItem('flight'))
 
   const createTicket = async ()=>{
-    let customer = await fetch(`http://127.0.0.1:8000/customer-get/${user.id}`)
+    let customer = await fetch(`http://127.0.0.1:8000/customers/get-update/${user.id}`)
     let idCus = await customer.json()
      let ticket = await fetch('http://127.0.0.1:8000/tickets/',{
         method: 'POST',
@@ -89,7 +89,7 @@ const TicketFinal = () => {
                   <div className="name" style={{color:'white'}}>Customer :</div>
                   <div className="value">
                       <p style={{color:'purple'}}>ID : <span style={{color:'green'}}>{user.id}</span></p>
-                      <p style={{color:'purple'}}>Name : <span style={{color:'green'}}>{user.first_name}</span><span style={{color:'green'}}>{user.last_name}</span></p>
+                      <p style={{color:'purple'}}>Name : <span style={{color:'green'}}>{user.first_name}</span><span></span><span style={{color:'green'}}>{user.last_name}</span></p>
                       <p style={{color:'purple'}}>Email : <a style={{color:'green'}} href='contact'>{user.email}</a></p>
                   </div>
               </div>

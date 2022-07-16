@@ -2,8 +2,11 @@ import React from 'react'
 
 const CustomerInput = () => {
    const user = localStorage.getItem('user')
+   const customer_id = localStorage.getItem('customer_id')
+
+customer_id ? (window.location.href='/ticketFinal'):(console.log('not a customer'))
    const collectCustomer=async()=>{
-    let Customer =await fetch('http://127.0.0.1:8000/customers/',{
+    let Customer =await fetch(`http://127.0.0.1:8000/customers/`,{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

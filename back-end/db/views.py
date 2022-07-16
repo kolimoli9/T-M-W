@@ -7,13 +7,18 @@ from rest_framework.decorators import api_view,permission_classes
 from .Serializers import AirlinesSerializer,CountriesSerializer,CustomersSerializer,FlightsSerializer,TicketsSerializer,UserSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.contrib.auth.hashers import make_password, check_password
 from django.core import mail
 from django.contrib.auth.models import User
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+from .utils import GETS,ALLS
+
+
+
+
+
+
+
 # CUSTOM TOKEN
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -85,11 +90,9 @@ def forgot_password(r):
 ##################################################
 ############# C.R.U.D ############################
 ##################################################
-
 #######
 #USERS#
 #######
-
 @api_view(['POST'])
 def addusers(r):
     try:
@@ -105,13 +108,8 @@ def addusers(r):
 def users(request,id=-1):
     if request.method == 'GET': 
         if int(id) > -1: 
-            users= User.objects.get(id = id)
-            user = {
-                "username":users.username,
-                "email":users.email,
-                "is_staff":users.is_staff
-            }
-            return JsonResponse(user, safe=False)
+            user= User.objects.get(id = id)
+            return JsonResponse(list(user), safe=False)
         else: 
             users = User.objects.all()
             serializer = UserSerializer(users, many=True)
@@ -124,35 +122,22 @@ def users(request,id=-1):
     
     if request.method == 'PUT': 
         temp=User.objects.get(id = id)
-        try:
-            temp.username =request.data['username']
-        except:
-            pass
-        try:
-            temp.password =request.data['password'] 
-        except:
-            pass
-        try:
-            temp.email =request.data['email']
-        except:
-            pass
-        try:
-            temp._group =request.data['role']
-        except:
-            pass    
+        try:temp.username =request.data['username'] 
+        except:pass
+        try:temp.password =make_password(request.data['password'] )
+        except:pass
+        try:temp.email =request.data['email']
+        except:pass
+        try:temp.first_name =request.data['first_name']
+        except:pass
+        try:temp.last_name =request.data['last_name']
+        except:pass
         temp.save()
         return JsonResponse({'PUT': id,'name':temp.username})
+
 ###########
 #CUSTOMERS#
 ###########
-@api_view(['GET'])
-def QuickGet(r,id):
-    if r.method == 'GET':
-        user = User.objects.get(id=id)
-        customer = Customers.objects.get(user=user)
-        return JsonResponse({'id':customer.id},safe=False)
-
-
 @api_view(['POST','DELETE'])
 def customers(request,id=-1):
     if request.method == 'POST': 
@@ -160,15 +145,10 @@ def customers(request,id=-1):
         last_name =request.data['last_name']
         adress =request.data['adress']
         phone = request.data['phone']
-        try:
-           credit_num =request.data['credit_num']
-        except:
-            credit_num=0000
-        try:    
-           user = User.objects.get(id=request.data['user_id'])
-        except:
-            return  JsonResponse({'message':"Not Registerd."}) 
-
+        try:credit_num =request.data['credit_num']
+        except:credit_num=0000
+        try:user = User.objects.get(id=request.data['user_id'])
+        except:return  JsonResponse({'message':"Not Registerd."}) 
         Customers.objects.create(first_name=first_name,last_name=last_name,adress=adress,phone = phone,credit_num=credit_num,user=user)
         return JsonResponse({'message':"CREATED"})
     
@@ -180,12 +160,11 @@ def customers(request,id=-1):
 
 @api_view(['GET','PUT'])
 @permission_classes([IsAuthenticated])
-def getupdatecustomers(request,id=-1):
+def getCustomers(request,id=-1):
     if request.method == 'GET':    
-        if int(id) > -1: 
-            if int(id)> Customers.objects.count(): return JsonResponse({"out of bounds array":str(id)})
-            customers= Customers.objects.filter(id = id).values()
-            return JsonResponse(list(customers), safe=False)
+        if int(id) > -1:
+            customer=GETS.customer_by_user(id) 
+            return JsonResponse({'customer':customer},safe=False)
         else: 
             customers = Customers.objects.all()
             serializer = CustomersSerializer(customers, many=True)
@@ -193,31 +172,16 @@ def getupdatecustomers(request,id=-1):
 
     if request.method == 'PUT': 
         temp=Customers.objects.get(id = id)
-        try:
-            temp.first_name =request.data['first_name']
-            temp.save()
-        except:
-            pass
-        try:
-            temp.last_name =request.data['last_name']
-            temp.save()
-        except:
-            pass
-        try:
-            temp.adress =request.data['adress']
-            temp.save()
-        except:
-            pass
-        try:
-            temp.phone= request.data['phone']
-            temp.save()
-        except:
-            pass
-        try:
-            temp.credit_num =request.data['credit_num']
-            temp.save()
-        except:
-            pass
+        try:temp.first_name =request.data['first_name'];temp.save()
+        except:pass
+        try:temp.last_name =request.data['last_name'];temp.save()
+        except:pass
+        try:temp.adress =request.data['adress'];temp.save()
+        except:pass
+        try:temp.phone= request.data['phone'];temp.save()
+        except:pass
+        try:temp.credit_num =request.data['credit_num'];temp.save()
+        except:pass
         return JsonResponse({'PUT': id,'name':(temp.first_name,temp.last_name)})
 
 
@@ -246,26 +210,16 @@ def flights(request,id=-1):
         
         if request.method == 'PUT': 
             temp=Flights.objects.get(id = id)
-            try:
-                temp.origin_country =request.data['origin_country']
-            except:
-                pass 
-            try:  
-                temp.destenation_country =request.data['destenation_country']
-            except:
-                pass
-            try:    
-                temp.dep_time =request.data['dep_time']
-            except:
-                pass
-            try:    
-                temp.arrival_time =request.data['arrival_time']
-            except:
-                pass
-            try:    
-                temp.tickets_left = request.data['tickets_left']
-            except:
-                pass
+            try:temp.origin_country =request.data['origin_country']
+            except:pass 
+            try:temp.destenation_country =request.data['destenation_country']
+            except:pass
+            try:temp.dep_time =request.data['dep_time']
+            except:pass
+            try:temp.arrival_time =request.data['arrival_time']
+            except:pass
+            try:temp.tickets_left = request.data['tickets_left']
+            except:pass
             temp.save()    
             return JsonResponse({'PUT': id,'name':f'{temp.origin_country}>>{temp.destenation_country}||{temp.tickets_left}'})
     else:
@@ -311,6 +265,7 @@ def getflights(request,id=-1):
 #TICKETS#
 #########
 @api_view(['GET','POST','DELETE','PUT'])
+@permission_classes
 def tickets(request,id=-1):
     if request.method == 'GET':    
         if int(id) > -1: 
@@ -328,13 +283,10 @@ def tickets(request,id=-1):
         return JsonResponse({'DELETE':f'ticketID: {id}'})
     
     if request.method == 'POST': 
-        try:
-           customer = Customers.objects.get(id=request.data['customer_id'])
-        except:
-            return JsonResponse({'message':f'Customer Info is not in the system \n OR \nSomthing else went wrong, try again later.'})  
+        try:customer = Customers.objects.get(id=request.data['customer_id'])
+        except:return JsonResponse({'message':f'Customer Info is not in the system \n OR \nSomthing else went wrong, try again later.'})  
         flight = Flights.objects.get(id=request.data['flight_id'])
-        if flight.tickets_left == 0:
-            return JsonResponse({'message':'This flights is SOLD OUT on tickets!'})
+        if flight.tickets_left == 0:return JsonResponse({'message':'This flights is SOLD OUT on tickets!'})
         flight.tickets_left-=1
         flight.save()
         Tickets.objects.create(flight=flight, customer=customer)
@@ -342,27 +294,22 @@ def tickets(request,id=-1):
 
     if request.method == 'PUT': 
         temp=Tickets.objects.get(id = id)
-        FID = temp.flight_id_id
-        try:
-            temp.id =request.data['id']
-        except:
-            pass 
         try:  
-            temp.flight_id_id =request.data['flight_id']
-            Oflight =Flights.objects.get(id=FID)
-            Oflight.tickets_left+=1
-            Oflight.save()
-            Nflight = Flights.objects.get(id=request.data['flight_id'])
+            temp.flight =request.data['flight_id']
+            flight =Flights.objects.get(id=request.data['flight_id'])
+            flight.tickets_left+=1
+            flight.save()
+            Nflight = Flights.objects.get(id=temp.flight)
             Nflight.tickets_left-=1
             Nflight.save()
         except:
             pass
         try:  
-            temp.customer_id_id =request.data['customer_id']
+            temp.customer =request.data['customer_id']
         except:
             pass
         temp.save()    
-        return JsonResponse({'PUT': id, 'New Data':f'{temp.id},{temp.flight_id_id},{temp.customer_id_id}'})
+        return JsonResponse({'PUT': id, 'Ticket New Data':f'{temp.id},{temp.flight},{temp.customer}'})
 
 
 

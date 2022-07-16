@@ -13,9 +13,8 @@ urlpatterns = [
     path('contact/',views.contact),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('forgot_password',views.forgot_password),
+    path('forgot_password/',views.forgot_password),
     #TESTS
-    
     
     #C R U D
     path('users/',views.users,name="users"),
@@ -23,9 +22,10 @@ urlpatterns = [
     path('users/<int:id>',views.users,name="usersID"),
     
     path('customers/',views.customers,name='customers'),
-    path('customers/getupdate',views.getupdatecustomers,name='customersaddupdate'),
+    path('customers/get-update/',views.getCustomers,name='customersaddupdate'),
+    path('customers/get-update/<int:id>',views.getCustomers,name='IDaddupdate'),
     path('customers/<int:id>',views.customers,name='customersID'),
-    path('customer-get/<int:id>',views.QuickGet),
+    
     path('getflights/',views.getflights,name='getflights'),
     path('flights/',views.flights,name='flights'),
     path('flights/<int:id>',views.flights,name='flightsID'),
