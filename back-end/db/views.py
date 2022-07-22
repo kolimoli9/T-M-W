@@ -104,7 +104,7 @@ def addusers(r):
     return JsonResponse({'message':'Welcome!\n U can Login Now !'},safe=False)
 
 @api_view(['GET','DELETE','PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def users(request,id=-1):
     if request.method == 'GET': 
         if int(id) > -1: 
@@ -265,7 +265,6 @@ def getflights(request,id=-1):
 #TICKETS#
 #########
 @api_view(['GET','POST','DELETE','PUT'])
-@permission_classes
 def tickets(request,id=-1):
     if request.method == 'GET':    
         if int(id) > -1: 
@@ -284,13 +283,13 @@ def tickets(request,id=-1):
     
     if request.method == 'POST': 
         try:customer = Customers.objects.get(id=request.data['customer_id'])
-        except:return JsonResponse({'message':f'Customer Info is not in the system \n OR \nSomthing else went wrong, try again later.'})  
+        except:return JsonResponse({'message':'Customer Info is not in the system \n OR \nSomthing else went wrong, try again later.'})  
         flight = Flights.objects.get(id=request.data['flight_id'])
         if flight.tickets_left == 0:return JsonResponse({'message':'This flights is SOLD OUT on tickets!'})
         flight.tickets_left-=1
         flight.save()
         Tickets.objects.create(flight=flight, customer=customer)
-        return JsonResponse({'message':'CREATED'})    
+        return JsonResponse({'message':'CREATED'},safe=False)    
 
     if request.method == 'PUT': 
         temp=Tickets.objects.get(id = id)
@@ -310,9 +309,3 @@ def tickets(request,id=-1):
             pass
         temp.save()    
         return JsonResponse({'PUT': id, 'Ticket New Data':f'{temp.id},{temp.flight},{temp.customer}'})
-
-
-
-
-
-

@@ -14,7 +14,7 @@ const TicketFinal = () => {
         },
     body:JSON.stringify({
       flight_id:flight.id,
-      customer_id: idCus.id
+      customer_id: 3
    })});
    let response = await ticket.json();
    if(response.message === 'CREATED'){

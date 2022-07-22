@@ -25,7 +25,7 @@ const Layout = () => {
         {user ? (
           <>
              <li className="nav-item">
-             <a className="btn btn-dark" href="myTickets" style={{color:'green'}}>{JSON.parse(user).email}</a>
+             <a className="btn btn-dark" href="myTickets" style={{color:'green'}}>{JSON.parse(user).username}</a>
            </li>
            <li className="nav-item "> 
            <a className="btn btn-dark" href="/" style={{color:'red'}} onClick={()=>{

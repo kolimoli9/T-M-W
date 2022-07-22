@@ -33,6 +33,7 @@ const Login = () => {
 			}
             setPassword("");
 			setUsername("");
+			
 			 localStorage.setItem('user',JSON.stringify(user));
 		     window.location.href = "/";      
         }else{alert('You are not in the system,\n please register.');window.location.href = "/register";}
