@@ -1,7 +1,9 @@
 import './Contact.css' 
 import axios from 'axios'
+import { useSelector } from 'react-redux'
+import { selectUser } from '../plahim/userSlice'
 const Contact = () => {
-  const user = localStorage.getItem('user')
+  const user = useSelector(selectUser)
 
   const cancel=()=>{window.location.href = "/"}
   const send= async ()=>{
@@ -36,12 +38,12 @@ const Contact = () => {
         <div className="screen-body-item">
           <div className="app-form">
             <div className="app-form-group">
-              <input className="app-form-control" placeholder={user?(JSON.parse(user).first_name):("NAME")} defaultValue={user?(JSON.parse(user).first_name):("NAME")} id='NAME'></input>
+              <input className="app-form-control" placeholder={user?(user.first_name):("NAME")} defaultValue={user?(user.first_name):("NAME")} id='NAME'></input>
             </div>
             <div className="app-form-group">
               {
                 user ? (
-                  <input className="app-form-control" placeholder={JSON.parse(user).email} defaultValue={JSON.parse(user).email} id='EMAIL'></input>
+                  <input className="app-form-control" placeholder={user.email} defaultValue={user.email} id='EMAIL'></input>
                 ):(
                   <input className="app-form-control" placeholder="EMAIL" id='EMAIL'></input>
                 )

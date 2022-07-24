@@ -1,11 +1,12 @@
 import React, { useState  } from 'react';
 import  jwt_decode  from "jwt-decode";
+import {  useDispatch} from 'react-redux';
+import {setTheUser} from '../plahim/userSlice';
 
 const Login = () => {
-	
-	
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const dispatch = useDispatch();
 	
 	const getlogin = async () => {
         let response = await fetch("http://127.0.0.1:8000/login/", {
@@ -23,7 +24,7 @@ const Login = () => {
             localStorage.setItem("token",data.access);
             localStorage.setItem("tokenR",JSON.stringify(data.refresh)); 
 			let decodedToken = jwt_decode(data.access) 
-			let user = {
+			let newUser = {
 				id:decodedToken.user_id,
 				username: decodedToken.username,
 				email:decodedToken.email,
@@ -33,21 +34,17 @@ const Login = () => {
 			}
             setPassword("");
 			setUsername("");
-			
-			 localStorage.setItem('user',JSON.stringify(user));
-		     window.location.href = "/";      
+            dispatch(setTheUser(newUser))
         }else{alert('You are not in the system,\n please register.');window.location.href = "/register";}
 	};
 
-
-
-
+console.log("gggggggggggggggggggggggg")
   return (
     <div className='login'>
 <div className="container-login100">
 			<div className="wrap-login100">
 				<div className="login100-pic js-tilt" data-tilt>
-					<img src="images/img-01.png" alt="IMG"></img>
+					<img src={process.env.PUBLIC_URL + "/images/img-01.png"} alt="IMG"></img>
 				</div>
 
 				<div className="login100-form validate-form">

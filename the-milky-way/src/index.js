@@ -1,41 +1,18 @@
-import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Contact from "./components/Contact";
-import NoPage from "./components/NoPage";
-import './index.css'
-import Forgot from "./components/Forgot";
-import Register from "./components/Register";
-import Flights from "./components/Flights";
-import CustomerInput from "./components/CustomerInput";
-import TicketFinal from "./components/TicketFinal";
-import MyTickets from "./components/MyTickets";
+import "./index.css";
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { store } from './plahim/store';
+import App from './App';
+import './index.css';
 
-export default function App() {
-  
-  return (
-    <BrowserRouter>
+const container = document.getElementById('root');
+const root = createRoot(container);
 
-      <Routes>
-        <Route path="/" element={<Layout/>}>
-          <Route index element={<Home />} />
-          <Route path="login" element={<Login/>} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="*" element={<NoPage />} />
-          <Route path="forgot-pwd" element={<Forgot />} />
-          <Route path="register" element={<Register/>}/>
-          <Route path="flights" element={<Flights/>}/>
-          <Route path="customerInfo" element={<CustomerInput/>}/>
-          <Route path="ticketFinal" element={<TicketFinal/>}/> 
-          <Route path="myTickets" element={<MyTickets></MyTickets>}/> 
-        </Route>
-      </Routes>                
-
-    </BrowserRouter>
-  );
-}
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />)
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+);

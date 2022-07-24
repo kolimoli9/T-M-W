@@ -1,6 +1,7 @@
 import React from 'react'
 import './NoPage.css'
 const NoPage = () => {
+  console.log(window.location)
   return (
       <div className='NoPage'>
 
