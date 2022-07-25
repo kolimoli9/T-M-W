@@ -1,12 +1,15 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { selectCustomer } from '../plahim/customerSlice';
 import {  selectFlights, setChosenFlight, setFlights } from '../plahim/flightsSlice';
 import { selectUser } from '../plahim/userSlice';
 
 const Flights = () => {
   const nav =useNavigate()
+    const customer = useSelector(selectCustomer)
     const user = useSelector(selectUser)
+
     const flights=useSelector(selectFlights)
     const dispatch = useDispatch()
     
@@ -20,10 +23,14 @@ const Flights = () => {
       if(user===false){
         alert('You Need To Sign In First !')
         nav("/login")
-        }else{     
+        }if(customer === null){     
           dispatch(setChosenFlight(flight))
           nav("/customerInfo")
-    };
+    }else{
+      dispatch(setChosenFlight(flight))
+      nav("/stickeFinal")
+
+    }
   };
     
   return (
