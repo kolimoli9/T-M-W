@@ -165,7 +165,7 @@ def getCustomers(request,id=-1):
     if request.method == 'GET':    
         if int(id) > -1:
             customer=GETS.customer_by_user(id) 
-            return JsonResponse({'customer':customer},safe=False)
+            return JsonResponse(customer,safe=False)
         else: 
             customers = Customers.objects.all()
             serializer = CustomersSerializer(customers, many=True)
@@ -266,6 +266,7 @@ def getflights(request,id=-1):
 #TICKETS#
 #########
 @api_view(['GET','POST','DELETE','PUT'])
+@permission_classes([IsAuthenticated])
 def tickets(request,id=-1):
     if request.method == 'GET':    
         if int(id) > -1: 
@@ -310,3 +311,30 @@ def tickets(request,id=-1):
             pass
         temp.save()    
         return JsonResponse({'PUT': id, 'Ticket New Data':f'{temp.id},{temp.flight},{temp.customer}'})
+@api_view(['GET','DELETE'])
+@permission_classes([IsAuthenticated])
+def customerTickets(r, id=-1):
+    if r.method == 'GET':    
+        if int(id) > -1:
+            myTickets = []
+            customer = Customers.objects.get(id=id) 
+            tickets= Tickets.objects.filter(customer = id)
+            for ticket in tickets:
+                flight = Flights.objects.get(id=ticket.flight)
+                customerCredit = str(customer.credit_num)
+                credit = customerCredit[6: ]
+                pt = {
+                    'name':f'{customer.first_name}-{customer.last_name}',
+                    'flight':f'Flight number {flight.id} to :{flight.origin_country} from :{flight.destenation_country}',
+                    'departure':f'Departure at {flight.dep_time}',
+                    'arrival':f'Arrival at {flight.arrival_time}',
+                    'credit':f'**** **** *** {credit}'
+                }
+                myTickets.append(pt)        
+            return JsonResponse(tickets, safe=False)
+        else:
+            return JsonResponse({'message':'No ID Was Provided'})
+    if r.method == 'DELETE':
+        temp = Tickets.objects.get(customer=id)
+        temp.delete()
+        return JsonResponse({'message':'DELETED'})        

@@ -1,45 +1,71 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { selectCustomer } from '../plahim/customerSlice';
-import {  selectFlights, setChosenFlight, setFlights } from '../plahim/flightsSlice';
-import { selectUser } from '../plahim/userSlice';
-
+import { selectCustomer, setCustomer } from '../../plahim/customerSlice';
+import {  selectFlights, setChosenFlight, setFlights } from '../../plahim/flightsSlice';
+import { selectUser } from '../../plahim/userSlice';
+import axios from 'axios';
 const Flights = () => {
+
   const nav =useNavigate()
     const customer = useSelector(selectCustomer)
     const user = useSelector(selectUser)
-
+    
     const flights=useSelector(selectFlights)
     const dispatch = useDispatch()
-    
-    const getFlights=async ()=>{
+   
+    const getFlights= async ()=>{
+      if(flights.length===0){
         let request = await fetch("http://127.0.0.1:8000/getflights/");
-        let response =await request.json();
+        let response = await request.json();
         dispatch(setFlights((response)));
+      }else{
+        console.log('Already fetched flights')
+      }
     };
-  
-    const orderNow = async (flight)=>{
+    
+    const getCustomer = async(flight)=>{
+      if(customer===null){
+          let token = localStorage.getItem('token')
+          axios.get(`http://127.0.0.1:8000/customers/get-update/${user.id}`,{
+              headers:{
+                "Content-Type": "application/json",
+                Authorization:"Bearer "+String(token)
+              }}).then((response)=>{
+                let cus = response.data
+                if(cus){ 
+                dispatch(setCustomer(cus));
+                dispatch(setChosenFlight(flight));
+                nav("/ticketFinal")
+              }else{
+                dispatch(setChosenFlight(flight));
+                nav('/customerInfo')
+              }
+              })
+            }else{
+              console.log('Already fetched customer')
+            }
+        };
+    
+    const orderNow = (flight)=>{
       if(user===false){
         alert('You Need To Sign In First !')
         nav("/login")
-        }if(customer === null){     
-          dispatch(setChosenFlight(flight))
-          nav("/customerInfo")
-    }else{
-      dispatch(setChosenFlight(flight))
-      nav("/stickeFinal")
-
+        }if(user){
+          getCustomer(flight); 
     }
   };
-    
+
+getFlights();
+
+ 
   return (
+    
     <div className='flights'>
       
     <div className='container'>
 
-<table className="table table-dark table-striped">
-
+<table className="table table-dark table-striped" >
     <thead style={{'backgroundColor':'black'}}>
     <tr >
     <th>ID</th>
@@ -54,8 +80,8 @@ const Flights = () => {
     </tr>
     </thead>
 <tbody>
-  {flights ? (""):(getFlights())}
-{flights.map(( flight, index ) => {
+  
+{ flights.map(( flight, index ) => {
           return (
             <tr key={index}>
               <td>{flight.id}</td>

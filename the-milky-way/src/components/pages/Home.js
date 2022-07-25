@@ -1,46 +1,56 @@
 import { React, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {  selectShowFlights, setShowFlights } from "../../plahim/flightsSlice";
+import axios from 'axios';
+
 
 const Home = () => {
-   
+    const nav = useNavigate()
+    const dispatch = useDispatch()
+    const ShowFlights = useSelector(selectShowFlights)
 
     const [From, setFrom] = useState("")
     const [To, setTo] = useState("")
-    const [depart, setDepart] = useState("")
+    const [Depart, setDepart] = useState("")
     const [CLASS, setCLASS] = useState(1)
     const [adults, setAdults] = useState(1)
-    const [flights, setFlights] = useState([]);
-    const [table, setTable] = useState(0);
-    
-    const ShowFlights=async ()=>{
-        if(table ===0){
-          let request = await fetch("http://127.0.0.1:8000/getflights/");
-          let response =await request.json();
-          response.forEach(flight => {
-            if(flight.from===From){
-                if(flight.too===To){
-                    flights.push(flight)
-                }
-            else if(flight.dep_date===depart){
-                flights.push(flight)
-            }
-            else{alert("No flights for this parameters")}    
-            }
-          });
+    const ChosenFlights = []
 
-          setTable(1)
-        }else{
-          console.log('runing')
-          return;
-        }
-      };
+    const showFlights= async ()=>{
+           axios.get("http://127.0.0.1:8000/getflights/").then((response)=>{
+            if(response.status===200){
+                let allFlights = response.data
+                allFlights.forEach(flight => {
+                    if(flight.from === From && flight.too===To){
+                        ChosenFlights.push(flight)
+                    }if(flight.from !== From && flight.too===To){
+                        ChosenFlights.push(flight)
+                    }if(flight.dep_date===Depart){
+                        ChosenFlights.push(flight)
+                    }
+                  })
+                  if(ChosenFlights.length===0){
+                    alert('No Flights Under Those Parameters Exist..')
+                    nav('/')
+                  }else{
+                    dispatch(setShowFlights(ChosenFlights))
+                    nav('/showFlights')
+                  }
+                  console.log(ChosenFlights)
+            }})};
+          
+
+
 
     return (
+
 <div id="booking" className="section">
 		<div className="section-center">
 			<div className="container">
 				<div className="row">
 					<div className="booking-form">
-        <form>
+        <div>
             <div className="form-group">
                 <div className="form-checkbox">
                     <label htmlFor="roundtrip">
@@ -58,13 +68,25 @@ const Home = () => {
                 <div className="col-md-6">
                     <div className="form-group">
                         <span className="form-label">Flying from</span>
-                        <input className="form-control" type="text" placeholder="From >> Country" value={From} onChange={(e)=>setFrom(e.target.value)}></input>
+                        <select className="form-control" type="text"  value={From} onChange={(e)=>setFrom(e.target.value)}>
+                            <option value={'ISRAEL'}>ISRAEL</option>
+                            <option value={'ENGLAND'}>ENGLAND</option>
+                            <option value={'USA'}>USA</option>
+                            <option value={'THILAND'}>THILAND</option>
+                            <option value={'TURKY'}>TURKY</option>
+                        </select>
                     </div>
                 </div>
                 <div className="col-md-6">
                     <div className="form-group">
                         <span className="form-label">Flyning to</span>
-                        <input className="form-control" type="text" placeholder="To >>Country" value={To} onChange={(e)=>setTo(e.target.value)}></input>
+                        <select className="form-control" type="text"  value={To} onChange={(e)=>setTo(e.target.value)}>
+                            <option value={'ENGLAND'}>ENGLAND</option>
+                            <option value={'ISRAEL'}>ISRAEL</option>
+                            <option value={'USA'}>USA</option>
+                            <option value={'THILAND'}>THILAND</option>
+                            <option value={'TURKY'}>TURKY</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -72,13 +94,13 @@ const Home = () => {
                 <div className="col-md-3">
                     <div className="form-group">
                         <span className="form-label">Departing</span>
-                        <input className="form-control" type="date" required value={depart} onChange={(e)=>setDepart(e.target.value)}></input>
+                        <input className="form-control" type="date"  value={Depart} onChange={(e)=>setDepart(e.target.value)}></input>
                     </div>
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
                         <span className="form-label">Returning</span>
-                        <input className="form-control" type="date" required></input>
+                        <input className="form-control" type="date" ></input>
                     </div>
                 </div>
                 <div className="col-md-2">
@@ -118,16 +140,17 @@ const Home = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-btn">
-                        <button className="submit-btn" onClick={()=>ShowFlights()}>Show flights</button>
+                        <button className="submit-btn" onClick={()=>showFlights()}>Show flights</button>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+    
 
     );
   };

@@ -1,35 +1,39 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { selectChosenFlight, setChosenFlight } from '../plahim/flightsSlice';
+import {  useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { selectCustomer } from '../plahim/customerSlice';
+import { selectChosenFlight } from '../plahim/flightsSlice';
 import { selectUser } from '../plahim/userSlice';
 
 const TicketFinal = () => {
-    const dispath = useDispatch()
     const nav =useNavigate()
     const flight = useSelector(selectChosenFlight)
     const user = useSelector(selectUser)
+    const customer = useSelector(selectCustomer)
+
+
   const createTicket = async ()=>{
+    let token = localStorage.getItem('token')
      let ticket = await fetch('http://127.0.0.1:8000/tickets/',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization:"Bearer "+String(token)
         },
     body:JSON.stringify({
       flight_id:flight.id,
-      customer_id: 3
+      customer_id: customer.id
    })});
    let response = await ticket.json();
    if(response.message === 'CREATED'){
-    dispath(setChosenFlight(null))
     nav('/myTickets')
    }else{
     alert(response.message)
-    localStorage.removeItem('flight')
     nav('/')
    }
-
   };
+    
+    
   return (
     <div className='ticketFinal'>
       <div className="page-wrapper bg-gra-03 p-t-45 p-b-50">
@@ -90,10 +94,11 @@ const TicketFinal = () => {
               </div>
               <div className="form-row m-b-55">
                   <div className="name" style={{color:'white'}}>Customer :</div>
-                  <div className="value">
-                      <p style={{color:'purple'}}>ID : <span style={{color:'green'}}>{user.id}</span></p>
-                      <p style={{color:'purple'}}>Name : <span style={{color:'green'}}>{user.first_name}</span><span></span><span style={{color:'green'}}>{user.last_name}</span></p>
-                      <p style={{color:'purple'}}>Email : <a style={{color:'green'}} href='contact'>{user.email}</a></p>
+                  <div className="value" style={{background: 'white',borderwidth:3,borderRadius:10,paddingLeft:10}}>
+                      <p style={{color:'black'}}>Customer ID : <span style={{color:'grey'}}>{customer.id}</span></p>
+                      <p style={{color:'black'}}>Name : <span style={{color:'grey'}}>{customer.first_name +' '+customer.last_name}</span></p>
+                      <p style={{color:'black'}}>Email : <Link className='link' to='/contact'>{user.email}</Link></p>
+                      <p style={{color:'black'}}>Credit Card: <span style={{color:'grey'}} >{customer.credit}</span></p>
                   </div>
               </div>
               <div>

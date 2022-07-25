@@ -1,16 +1,17 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Contact from "./components/Contact";
-import NoPage from "./components/NoPage";
-import Forgot from "./components/Forgot";
-import Register from "./components/Register";
-import Flights from "./components/Flights";
+import Layout from "./components/pages/Layout";
+import Home from "./components/pages/Home";
+import Login from "./components/pages/Login";
+import Contact from "./components/pages/Contact";
+import NoPage from "./components/pages/NoPage";
+import Forgot from "./components/pages/Forgot";
+import Register from "./components/pages/Register";
+import Flights from "./components/pages/Flights";
 import CustomerInput from "./components/CustomerInput";
 import TicketFinal from "./components/TicketFinal";
-import MyTickets from "./components/MyTickets";
+import MyTickets from "./components/pages/MyTickets";
+import ShowFlights from './components/ShowFlights';
 const App = ()=> {
 
     return (
@@ -21,13 +22,14 @@ const App = ()=> {
               <Route index element={<Home />} />
               <Route path="login" element={<Login />} />
               <Route path="contact" element={<Contact />} />
-              <Route path="*" element={<NoPage />} />
               <Route path="forgot-pwd" element={<Forgot />} />
               <Route path="register" element={<Register />} />
               <Route path="flights" element={<Flights />} />
               <Route path="customerInfo" element={<CustomerInput />} />
               <Route path="ticketFinal" element={<TicketFinal />} />
               <Route path="myTickets" element={<MyTickets></MyTickets>} />
+              <Route path="showFlights" element={<ShowFlights />} />
+              <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

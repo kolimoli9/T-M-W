@@ -1,14 +1,19 @@
 import {React } from 'react'
 import { Link, Outlet } from "react-router-dom";
-import { useSelector ,useDispatch} from 'react-redux';
-import { selectUser} from '../plahim/userSlice'
-import { selectCustomer } from '../plahim/customerSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, setTheUser} from '../../plahim/userSlice'
 const Layout=()=> { 
+  const dispatch = useDispatch()
   const user = useSelector(selectUser)
-  const customer = useSelector(selectCustomer)
-  const dispath = useDispatch()
-  
-   
+  window.onload=()=>{
+    let savedUser = localStorage.getItem('user')
+    console.log('savedUser: ',savedUser)
+    if(savedUser!=null){
+        let signedIn = JSON.parse(savedUser)
+        dispatch(setTheUser(signedIn))
+    }
+  };
+  console.log(user)
   return (
     <>
       <nav className="navbar navbar-expand bg-dark">
@@ -37,6 +42,7 @@ const Layout=()=> {
                     <Link className="btn btn-dark" to="/" style={{ color: 'red' }} onClick={() => {
                       localStorage.removeItem('token');
                       localStorage.removeItem('tokenR');
+                      localStorage.removeItem('user')
                       window.location.href='/';
                     } }>Logout</Link>
                   </li>
@@ -52,6 +58,7 @@ const Layout=()=> {
                   </li>
                 </>
               )}
+              
             </ul>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     value: [],
     flight: null,
+    showFlights:[],
 };
 export const flightsSlice = createSlice({
     name: 'flights',
@@ -13,10 +14,14 @@ export const flightsSlice = createSlice({
         setChosenFlight: (state,action)=>{
             state.flight = action.payload
         },
+        setShowFlights: (state,action)=>{
+            state.showFlights = action.payload
+        },
     }
 });
 
-export const {setFlights, setChosenFlight} = flightsSlice.actions;
+export const {setFlights, setChosenFlight, setShowFlights} = flightsSlice.actions;
 export const selectFlights = (state)=>state.flights.value;
 export const selectChosenFlight = (state)=>state.flights.flight;
+export const selectShowFlights = (state)=>state.flights.showFlights;
 export default flightsSlice.reducer;

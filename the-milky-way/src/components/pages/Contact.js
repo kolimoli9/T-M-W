@@ -1,11 +1,13 @@
 import './Contact.css' 
 import axios from 'axios'
 import { useSelector } from 'react-redux'
-import { selectUser } from '../plahim/userSlice'
+import { selectUser } from '../../plahim/userSlice'
+import { useNavigate } from 'react-router-dom'
 const Contact = () => {
   const user = useSelector(selectUser)
+  const nav = useNavigate()
 
-  const cancel=()=>{window.location.href = "/"}
+  const cancel=()=>{nav("/")}
   const send= async ()=>{
     let DATA = {
       EMAIL:document.getElementById('EMAIL').value,
@@ -13,7 +15,7 @@ const Contact = () => {
       NAME:document.getElementById('NAME').value,
       MESSAGE:document.getElementById('MESSAGE').value,
     }
-     axios.post('http://127.0.0.1:8000/contact/',DATA).then((response)=>{alert(response.data.message);window.location.href='/';})
+     axios.post('http://127.0.0.1:8000/contact/',DATA).then((response)=>{alert(response.data.message);nav('/');})
     
   };
 
@@ -38,7 +40,7 @@ const Contact = () => {
         <div className="screen-body-item">
           <div className="app-form">
             <div className="app-form-group">
-              <input className="app-form-control" placeholder={user?(user.first_name):("NAME")} defaultValue={user?(user.first_name):("NAME")} id='NAME'></input>
+              <input className="app-form-control" placeholder="NAME" defaultValue={user?(user.first_name):("")} id='NAME'></input>
             </div>
             <div className="app-form-group">
               {

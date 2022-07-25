@@ -15,6 +15,7 @@ class GETS:
                 "first_name":temp.first_name,
                 "last_name":temp.last_name,
                 "adress":temp.adress,
+                "credit":temp.credit_num,
                 "phone":temp.phone,
                 "user_id":temp.user.id
             }

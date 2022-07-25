@@ -1,7 +1,7 @@
 import React, { useState  } from 'react';
 import  jwt_decode  from "jwt-decode";
 import {  useDispatch} from 'react-redux';
-import {setTheUser} from '../plahim/userSlice';
+import {setTheUser} from '../../plahim/userSlice';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -9,7 +9,8 @@ const Login = () => {
     const [password, setPassword] = useState("")
     const dispatch = useDispatch();
 	const nav = useNavigate();
-
+	const [Checkbox, setCheckbox] = useState(false)
+	
 	const getlogin = async () => {
         let response = await fetch("http://127.0.0.1:8000/login/", {
             method: "POST",
@@ -24,7 +25,7 @@ const Login = () => {
         if(response.status===200){
             let data = await response.json();
             localStorage.setItem("token",data.access);
-            localStorage.setItem("tokenR",JSON.stringify(data.refresh)); 
+            localStorage.setItem("tokenR",data.refresh); 
 			let decodedToken = jwt_decode(data.access) 
 			let newUser = {
 				id:decodedToken.user_id,
@@ -34,11 +35,18 @@ const Login = () => {
 				first_name:decodedToken.first_name,
 				last_name:decodedToken.last_name
 			}
+            if(Checkbox){localStorage.setItem('user',JSON.stringify(newUser))}
             dispatch(setTheUser(newUser))
 			nav("/")
 		}else{alert('You are not in the system,\n please register.');window.location.href = "/register";}
 	};
-
+const RememberMe = ()=>{
+	if(Checkbox===true){
+		setCheckbox(false)
+	}if(Checkbox ===false){
+		setCheckbox(true)
+	}
+};
   return (
     <div className='login'>
 <div className="container-login100">
@@ -73,13 +81,16 @@ const Login = () => {
 							Login
 						</button>
 					</div>
-
+					<div className="text-center p-t-12">
+						<span style={{color:'green'}} disabled={true}>Remember Me</span>
+					    <input className="form-check-input mt-0"  type="checkbox" value={Checkbox} onClick={()=>RememberMe()}/>
+					</div>
 					<div className="text-center p-t-12">
 						<span className="txt1">
-							Forgot
+							Forgot :
 						</span>
 						<Link className="txt2" to="/forgot-pwd">
-							<span> ? </span>Username  /  Password
+							Username  /  Password <span> ? </span>
 						</Link>
 					</div>
 

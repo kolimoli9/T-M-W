@@ -7,7 +7,7 @@ const CustomerInput = () => {
    const user = useSelector(selectUser)
    const nav =useNavigate()
 
-   const collectCustomer=async()=>{
+   const createCustomer=async()=>{
     let Customer =await fetch(`http://127.0.0.1:8000/customers/`,{
       method: 'POST',
       headers: {
@@ -25,8 +25,8 @@ const CustomerInput = () => {
     if(response.message ==='CREATED'){
          nav("/ticketFinal")
     }else{
-        alert(response.message)
-        nav('/login')
+        alert(' Something went wrong ')
+        nav('/')
      }
    };
 
@@ -94,7 +94,7 @@ const CustomerInput = () => {
                   </div>
               </div>
               <div>
-                  <button className="btn btn--radius-2 btn--red" onClick={()=>collectCustomer()}>Next</button>
+                  <button className="btn btn--radius-2 btn--red" onClick={()=>createCustomer()}>Next</button>
               </div>
                   </div>
               </div>
