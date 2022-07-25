@@ -1,12 +1,14 @@
 import {React } from 'react'
 import { Link, Outlet } from "react-router-dom";
 import { useSelector ,useDispatch} from 'react-redux';
-import { selectUser,test} from '../plahim/userSlice'
+import { selectUser} from '../plahim/userSlice'
+import { selectCustomer } from '../plahim/customerSlice';
 const Layout=()=> { 
-const user = useSelector(selectUser)
-const dispatch = useDispatch();
-
-  console.log(user)
+  const user = useSelector(selectUser)
+  const customer = useSelector(selectCustomer)
+  const dispath = useDispatch()
+  
+   
   return (
     <>
       <nav className="navbar navbar-expand bg-dark">

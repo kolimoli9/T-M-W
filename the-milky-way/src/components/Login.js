@@ -2,12 +2,14 @@ import React, { useState  } from 'react';
 import  jwt_decode  from "jwt-decode";
 import {  useDispatch} from 'react-redux';
 import {setTheUser} from '../plahim/userSlice';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const dispatch = useDispatch();
-	
+	const nav = useNavigate();
+
 	const getlogin = async () => {
         let response = await fetch("http://127.0.0.1:8000/login/", {
             method: "POST",
@@ -32,13 +34,11 @@ const Login = () => {
 				first_name:decodedToken.first_name,
 				last_name:decodedToken.last_name
 			}
-            setPassword("");
-			setUsername("");
             dispatch(setTheUser(newUser))
-        }else{alert('You are not in the system,\n please register.');window.location.href = "/register";}
+			nav("/")
+		}else{alert('You are not in the system,\n please register.');window.location.href = "/register";}
 	};
 
-console.log("gggggggggggggggggggggggg")
   return (
     <div className='login'>
 <div className="container-login100">
@@ -53,7 +53,7 @@ console.log("gggggggggggggggggggggggg")
 					</span>
 
 					<div className="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-						<input className="input100" type="text" name="email" placeholder="Username" value={username} onChange={(e)=>setUsername(e.target.value)}></input>
+						<input className="input100" type="text" name="email" placeholder="Username" value={username} onChange={(e)=>setUsername(e.target.value)} ></input>
 						<span className="focus-input100"></span>
 						<span className="symbol-input100">
 							<i className="fa fa-envelope" aria-hidden="true"></i>
@@ -61,7 +61,7 @@ console.log("gggggggggggggggggggggggg")
 					</div>
 
 					<div className="wrap-input100 validate-input" data-validate = "Password is required">
-						<input className="input100" type="password" name="pass" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)}></input>
+						<input className="input100" type="password" name="pass" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} ></input>
 						<span className="focus-input100"></span>
 						<span className="symbol-input100">
 							<i className="fa fa-lock" aria-hidden="true"></i>
@@ -78,16 +78,16 @@ console.log("gggggggggggggggggggggggg")
 						<span className="txt1">
 							Forgot
 						</span>
-						<a className="txt2" href="/forgot-pwd">
+						<Link className="txt2" to="/forgot-pwd">
 							<span> ? </span>Username  /  Password
-						</a>
+						</Link>
 					</div>
 
 					<div className="text-center p-t-136">
-						<a className="txt2" href="/register">
+						<Link className="txt2" to="/register">
 							Create your Account
 							<i className="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-						</a>
+						</Link>
 					</div>
 				</div>
 			</div>

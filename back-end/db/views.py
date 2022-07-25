@@ -148,8 +148,9 @@ def customers(request,id=-1):
         try:credit_num =request.data['credit_num']
         except:credit_num=0000
         try:user = User.objects.get(id=request.data['user_id'])
-        except:return  JsonResponse({'message':"Not Registerd."}) 
-        Customers.objects.create(first_name=first_name,last_name=last_name,adress=adress,phone = phone,credit_num=credit_num,user=user)
+        except:return  JsonResponse({'message':"Not Registerd."})
+        try:chekCustomer=Customers.objects.get(user= id);return JsonResponse({'message':"Already A Customer"})
+        except:Customers.objects.create(first_name=first_name,last_name=last_name,adress=adress,phone = phone,credit_num=credit_num,user=user)
         return JsonResponse({'message':"CREATED"})
     
     if request.method == 'DELETE': 

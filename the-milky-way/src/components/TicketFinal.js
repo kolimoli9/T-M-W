@@ -1,12 +1,15 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { selectChosenFlight, setChosenFlight } from '../plahim/flightsSlice';
+import { selectUser } from '../plahim/userSlice';
 
 const TicketFinal = () => {
-    const user = JSON.parse(localStorage.getItem('user'))
-    const flight = JSON.parse(localStorage.getItem('flight'))
-
+    const dispath = useDispatch()
+    const nav =useNavigate()
+    const flight = useSelector(selectChosenFlight)
+    const user = useSelector(selectUser)
   const createTicket = async ()=>{
-    let customer = await fetch(`http://127.0.0.1:8000/customers/get-update/${user.id}`)
-    let idCus = await customer.json()
      let ticket = await fetch('http://127.0.0.1:8000/tickets/',{
         method: 'POST',
         headers: {
@@ -18,12 +21,12 @@ const TicketFinal = () => {
    })});
    let response = await ticket.json();
    if(response.message === 'CREATED'){
-    localStorage.removeItem('flight')
-    window.location.href='/myTickets'
+    dispath(setChosenFlight(null))
+    nav('/myTickets')
    }else{
     alert(response.message)
     localStorage.removeItem('flight')
-    window.location.href='/'
+    nav('/')
    }
 
   };

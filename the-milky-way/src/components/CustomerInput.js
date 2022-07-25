@@ -1,31 +1,33 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { selectUser } from '../plahim/userSlice'
 
 const CustomerInput = () => {
-   const user = localStorage.getItem('user')
-   const customer_id = localStorage.getItem('customer_id')
+   const user = useSelector(selectUser)
+   const nav =useNavigate()
 
-customer_id ? (window.location.href='/ticketFinal'):(console.log('not a customer'))
    const collectCustomer=async()=>{
     let Customer =await fetch(`http://127.0.0.1:8000/customers/`,{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-  body:JSON.stringify({
-    first_name:document.getElementById('first_name').value,
-    last_name:document.getElementById('last_name').value,
-    adress:document.getElementById('adress').value,
-    phone:document.getElementById('phone').value,
-    credit_num:document.getElementById('credit').value,
-    user_id : JSON.parse(user).id
- })});
- let response = await Customer.json();
-  if(response.message ==='CREATED'){
-    window.location.href="/ticketFinal"
-  }else{
-    alert(response.message)
-    window.location.href='/login'
-  }
+    body:JSON.stringify({
+        first_name:document.getElementById('first_name').value,
+        last_name:document.getElementById('last_name').value,
+        adress:document.getElementById('adress').value,
+        phone:document.getElementById('phone').value,
+        credit_num:document.getElementById('credit').value,
+        user_id : user.id
+    })});
+    let response = await Customer.json();
+    if(response.message ==='CREATED'){
+         nav("/ticketFinal")
+    }else{
+        alert(response.message)
+        nav('/login')
+     }
    };
 
     
@@ -44,12 +46,12 @@ customer_id ? (window.location.href='/ticketFinal'):(console.log('not a customer
                   <div className="value">
                           <div className="form-row m-b-55">
                               <div className="input-group">
-                                  <input className="input--style-5" type="text" id="first_name" defaultValue={JSON.parse(user).first_name}></input>
+                                  <input className="input--style-5" type="text" id="first_name" defaultValue={user.first_name}></input>
                               </div>
                           </div>
                           <div className="form-row m-b-55">
                               <div className="input-group">
-                                  <input className="input--style-5" type="text" id="last_name" defaultValue={JSON.parse(user).last_name}></input>
+                                  <input className="input--style-5" type="text" id="last_name" defaultValue={user.last_name}></input>
                               </div>
                           </div>
                       </div>
@@ -74,7 +76,7 @@ customer_id ? (window.location.href='/ticketFinal'):(console.log('not a customer
                   <div className="name">Email</div>
                   <div className="value">
                       <div className="input-group">
-                          <input className="input--style-5" type="email" id="email" defaultValue={user?(JSON.parse(user).email):('')}></input>
+                          <input className="input--style-5" type="email" id="email" defaultValue={user?(user.email):('')}></input>
                       </div>
                   </div>
               </div>

@@ -1,31 +1,28 @@
-import React, {  useState } from 'react';
-const Flights = () => {
-  
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import {  selectFlights, setChosenFlight, setFlights } from '../plahim/flightsSlice';
+import { selectUser } from '../plahim/userSlice';
 
-    const [flights, setFlights] = useState([]);
-    const [table, setTable] = useState(0);
+const Flights = () => {
+  const nav =useNavigate()
+    const user = useSelector(selectUser)
+    const flights=useSelector(selectFlights)
+    const dispatch = useDispatch()
     
     const getFlights=async ()=>{
-      if(table ===0){
         let request = await fetch("http://127.0.0.1:8000/getflights/");
         let response =await request.json();
-        setFlights(response);
-        setTable(1)
-      }else{
-        return;
-      }
+        dispatch(setFlights((response)));
     };
-    getFlights();
-   
+  
     const orderNow = async (flight)=>{
-      const user = localStorage.getItem('user')
-      if(user===null){
+      if(user===false){
         alert('You Need To Sign In First !')
-        window.location.href = "/login"
-      // window.location.href = "/customerInfo";
-    }else{     
-      localStorage.setItem('flight',JSON.stringify(flight))
-      window.location.href="/customerInfo"
+        nav("/login")
+        }else{     
+          dispatch(setChosenFlight(flight))
+          nav("/customerInfo")
     };
   };
     
@@ -50,6 +47,7 @@ const Flights = () => {
     </tr>
     </thead>
 <tbody>
+  {flights ? (""):(getFlights())}
 {flights.map(( flight, index ) => {
           return (
             <tr key={index}>
