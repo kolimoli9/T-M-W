@@ -1,19 +1,34 @@
-import {React } from 'react'
+import {React, useEffect } from 'react'
 import { Link, Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setTheUser} from '../../plahim/userSlice'
+import { setCustomer } from '../../plahim/customerSlice';
+import { selectFlights, setFlights } from '../../plahim/flightsSlice';
 const Layout=()=> { 
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
+  const flights = useSelector(selectFlights)
+
+  useEffect(()=> async ()=>{
+    if(flights.length===0){
+      let request = await fetch("https://my-server-for-tmw.herokuapp.com/getflights/");
+      let response = await request.json();
+      dispatch(setFlights((response)));
+    }else{
+      console.log('useEffect Layout')
+    }
+  })
+  
   window.onload=()=>{
     let savedUser = localStorage.getItem('user')
-    console.log('savedUser: ',savedUser)
+    let savedCustomer = localStorage.getItem('customer')
     if(savedUser!=null){
         let signedIn = JSON.parse(savedUser)
+        let tempcustomer = JSON.parse(savedCustomer)
         dispatch(setTheUser(signedIn))
+        dispatch(setCustomer(tempcustomer))
     }
   };
-  console.log(user)
   return (
     <>
       <nav className="navbar navbar-expand bg-dark">
@@ -33,16 +48,24 @@ const Layout=()=> {
               <li className="nav-item ">
                 <Link className="btn btn-dark" to="flights">Flights</Link>
               </li>
+              {user.is_staff ? (
+                <>
+                <li className="nav-item">
+                  <Link className="btn btn-dark" to="airline" >Airline Manager</Link>
+                </li>
+                </>
+               ):('')}
               {user ? (
                 <>
                   <li className="nav-item">
-                    <Link className="btn btn-dark" to="myTickets" style={{ color: 'green' }}>{user.email}</Link>
+                    <Link className="btn btn-dark" to="/myTickets" style={{ color: 'green' }}>{user.email}</Link>
                   </li>
                   <li className="nav-item ">
                     <Link className="btn btn-dark" to="/" style={{ color: 'red' }} onClick={() => {
                       localStorage.removeItem('token');
                       localStorage.removeItem('tokenR');
                       localStorage.removeItem('user')
+                      localStorage.removeItem('customer')
                       window.location.href='/';
                     } }>Logout</Link>
                   </li>
@@ -58,7 +81,8 @@ const Layout=()=> {
                   </li>
                 </>
               )}
-              
+               
+               
             </ul>
           </div>
         </div>

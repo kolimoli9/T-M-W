@@ -32,5 +32,7 @@ urlpatterns = [
     
     path('tickets/',views.tickets,name='tickets'),
     path('tickets/<int:id>',views.tickets,name='ticketsID'),
+    path('customer-tickets/<int:id>',views.customerTickets,name='ticketsBcustomer'),
+
 ]
 

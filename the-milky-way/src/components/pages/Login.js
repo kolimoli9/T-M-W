@@ -26,19 +26,22 @@ const Login = () => {
             let data = await response.json();
             localStorage.setItem("token",data.access);
             localStorage.setItem("tokenR",data.refresh); 
-			let decodedToken = jwt_decode(data.access) 
+			let decodedToken = jwt_decode(data.access)
 			let newUser = {
 				id:decodedToken.user_id,
 				username: decodedToken.username,
 				email:decodedToken.email,
-				isStaff:decodedToken.is_staff,
+				is_staff:decodedToken.is_staff,
 				first_name:decodedToken.first_name,
-				last_name:decodedToken.last_name
+				last_name:decodedToken.last_name,
 			}
-            if(Checkbox){localStorage.setItem('user',JSON.stringify(newUser))}
-            dispatch(setTheUser(newUser))
+			if(decodedToken.airline){
+				newUser['airline']=decodedToken.airline
+			}
+            if(Checkbox){localStorage.setItem('user',JSON.stringify(newUser))};
+            dispatch(setTheUser(newUser));
 			nav("/")
-		}else{alert('You are not in the system,\n please register.');window.location.href = "/register";}
+		}else{alert('You are not in the system,\n please register.');window.location.href = "/register"}
 	};
 const RememberMe = ()=>{
 	if(Checkbox===true){

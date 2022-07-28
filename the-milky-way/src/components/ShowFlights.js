@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { selectCustomer, setCustomer } from '../plahim/customerSlice'
 import { selectShowFlights, setChosenFlight, setShowFlights } from '../plahim/flightsSlice'
 import { selectUser } from '../plahim/userSlice'
-import axios from 'axios';
+import axios from 'axios'
 const ShowFlights = () => {
   const dispatch = useDispatch()
   const ShowFlights = useSelector(selectShowFlights)
@@ -20,7 +20,7 @@ const reset = ()=>{
 const getCustomerS = async(flight)=>{
   if(customer===null){
     let token = localStorage.getItem('token')
-    axios.get(`http://127.0.0.1:8000/customers/get-update/${user.id}`,{
+    axios.get(`https://my-server-for-tmw.herokuapp.com/customers/get-update/${user.id}`,{
       headers:{
         "Content-Type": "application/json",
         Authorization:"Bearer "+String(token)

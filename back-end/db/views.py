@@ -29,6 +29,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_staff']=user.is_staff
         token['first_name'] = user.first_name
         token['last_name']=user.last_name
+        if user.is_staff:
+            try:airline = Airlines.objects.get(user=user.id);token['airline'] = airline.airline_name
+            except:pass
+             
         return token
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -192,8 +196,6 @@ def getCustomers(request,id=-1):
 @api_view(['POST','DELETE','PUT'])
 @permission_classes([IsAuthenticated])
 def flights(request,id=-1):
-    user = request.data['user']
-    if user._group == 'airline':
         if request.method == 'POST': 
             airlineID =Airlines.objects.get(id=request.data['airlineID_id']) 
             origin_country =Countries.objects.get(id=request.data['origin_country_id'])
@@ -223,8 +225,7 @@ def flights(request,id=-1):
             except:pass
             temp.save()    
             return JsonResponse({'PUT': id,'name':f'{temp.origin_country}>>{temp.destenation_country}||{temp.tickets_left}'})
-    else:
-        return JsonResponse({'action_denied':'this user does not have permmission to do this.'})
+
 
 @api_view(['GET'])
 def getflights(request,id=-1):
@@ -260,8 +261,8 @@ def getflights(request,id=-1):
                     "tickets" : tck}
                 flights.append(flight)    
             
-            return JsonResponse(flights,safe=False) 
-    
+            return JsonResponse(flights,safe=False)
+
 #########
 #TICKETS#
 #########

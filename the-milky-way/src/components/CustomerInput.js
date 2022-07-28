@@ -8,7 +8,7 @@ const CustomerInput = () => {
    const nav =useNavigate()
 
    const createCustomer=async()=>{
-    let Customer =await fetch(`http://127.0.0.1:8000/customers/`,{
+    let Customer =await fetch(`https://my-server-for-tmw.herokuapp.com/customers/`,{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

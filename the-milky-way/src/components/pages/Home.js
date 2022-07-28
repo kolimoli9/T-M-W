@@ -18,7 +18,7 @@ const Home = () => {
     const ChosenFlights = []
 
     const showFlights= async ()=>{
-           axios.get("http://127.0.0.1:8000/getflights/").then((response)=>{
+           axios.get("https://my-server-for-tmw.herokuapp.com/getflights/").then((response)=>{
             if(response.status===200){
                 let allFlights = response.data
                 allFlights.forEach(flight => {

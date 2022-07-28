@@ -14,20 +14,11 @@ const Flights = () => {
     const flights=useSelector(selectFlights)
     const dispatch = useDispatch()
    
-    const getFlights= async ()=>{
-      if(flights.length===0){
-        let request = await fetch("http://127.0.0.1:8000/getflights/");
-        let response = await request.json();
-        dispatch(setFlights((response)));
-      }else{
-        console.log('Already fetched flights')
-      }
-    };
     
     const getCustomer = async(flight)=>{
       if(customer===null){
           let token = localStorage.getItem('token')
-          axios.get(`http://127.0.0.1:8000/customers/get-update/${user.id}`,{
+          axios.get(`https://my-server-for-tmw.herokuapp.com/customers/get-update/${user.id}`,{
               headers:{
                 "Content-Type": "application/json",
                 Authorization:"Bearer "+String(token)
@@ -35,6 +26,7 @@ const Flights = () => {
                 let cus = response.data
                 if(cus){ 
                 dispatch(setCustomer(cus));
+                localStorage.setItem('customer',JSON.stringify(cus))
                 dispatch(setChosenFlight(flight));
                 nav("/ticketFinal")
               }else{
@@ -44,6 +36,7 @@ const Flights = () => {
               })
             }else{
               console.log('Already fetched customer')
+              nav('/ticketFinal')
             }
         };
     

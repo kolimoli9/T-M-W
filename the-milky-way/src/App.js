@@ -12,6 +12,8 @@ import CustomerInput from "./components/CustomerInput";
 import TicketFinal from "./components/TicketFinal";
 import MyTickets from "./components/pages/MyTickets";
 import ShowFlights from './components/ShowFlights';
+import Airline from './components/pages/staff/Airline';
+import Admin from './components/pages/staff/Admin'
 const App = ()=> {
 
     return (
@@ -29,6 +31,8 @@ const App = ()=> {
               <Route path="ticketFinal" element={<TicketFinal />} />
               <Route path="myTickets" element={<MyTickets></MyTickets>} />
               <Route path="showFlights" element={<ShowFlights />} />
+              <Route path="airline" element={<Airline />} />
+              <Route path="admin" element={<Admin />} />
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>
