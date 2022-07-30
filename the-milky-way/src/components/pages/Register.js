@@ -3,7 +3,7 @@ const Register = () => {
    const [staffRequested, setstaffRequested] = useState('False')
   const register =async()=>{
     if(document.getElementById('password').value===document.getElementById('password2').value){ 
-    let rgisteration = await fetch('https://my-server-for-tmw.herokuapp.com/register/',{
+    let rgisteration = await fetch('http://127.0.0.1:8000/register/',{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
         body:JSON.stringify({

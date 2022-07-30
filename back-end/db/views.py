@@ -197,14 +197,17 @@ def getCustomers(request,id=-1):
 @permission_classes([IsAuthenticated])
 def flights(request,id=-1):
         if request.method == 'POST': 
-            airlineID =Airlines.objects.get(id=request.data['airlineID_id']) 
-            origin_country =Countries.objects.get(id=request.data['origin_country_id'])
-            destenation_country =Countries.objects.get(id=request.data['destenation_country_id'])
+            airlineID =Airlines.objects.get(airline_name=request.data['airline']) 
+            origin_country =Countries.objects.get(country_name=request.data['origin_country'])
+            destenation_country =Countries.objects.get(country_name=request.data['destenation_country'])
             dep_time =request.data['dep_time']
             arrival_time =request.data['arrival_time']
-            tickets_left = request.data['tickets_left']
-            Flights.objects.create(airlineID_id=airlineID.id,origin_country_id=origin_country.id,destenation_country_id=destenation_country.id,dep_time=dep_time,arrival_time=arrival_time,tickets_left=tickets_left)
-            return JsonResponse({'POST':f"CREATED: {origin_country}>>{destenation_country}||{tickets_left}"})
+            tickets = request.data['tickets']
+            try:
+                Flights.objects.create(airlineID_id=airlineID.id,origin_country=origin_country,destenation_country=destenation_country,dep_time=dep_time,arrival_time=arrival_time,tickets_left=tickets)
+                return JsonResponse({'message':"Flight Has Been Added !"})
+            except:
+              return JsonResponse({'message':"Faild To Add Flight" },safe=False)           
         
         if request.method == 'DELETE': 
             temp= Flights.objects.get(id = id)
@@ -212,19 +215,30 @@ def flights(request,id=-1):
             return JsonResponse({'DELETE': id})
         
         if request.method == 'PUT': 
-            temp=Flights.objects.get(id = id)
+            try:temp=Flights.objects.get(id = id) 
+            except:return JsonResponse({'message':'Error'})
             try:temp.origin_country =request.data['origin_country']
             except:pass 
             try:temp.destenation_country =request.data['destenation_country']
             except:pass
-            try:temp.dep_time =request.data['dep_time']
+            try:
+                departure = request.data['dep_time']
+                if departure =='':
+                  pass
+                else:
+                    temp.dep_time =departure
             except:pass
-            try:temp.arrival_time =request.data['arrival_time']
+            try:
+                arrival = request.data['arrival_time']
+                if arrival =='':
+                  pass
+                else:
+                    temp.arrival_time =arrival
             except:pass
-            try:temp.tickets_left = request.data['tickets_left']
+            try:temp.tickets_left = request.data['tickets']
             except:pass
             temp.save()    
-            return JsonResponse({'PUT': id,'name':f'{temp.origin_country}>>{temp.destenation_country}||{temp.tickets_left}'})
+            return JsonResponse({'message':'Changes Saved!'})
 
 
 @api_view(['GET'])

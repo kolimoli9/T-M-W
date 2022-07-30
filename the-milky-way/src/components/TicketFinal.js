@@ -1,36 +1,19 @@
-import axios from 'axios';
 import React from 'react'
-import {  useDispatch, useSelector } from 'react-redux';
+import {   useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { selectCustomer, setCustomer } from '../plahim/customerSlice';
+import { selectCustomer } from '../plahim/customerSlice';
 import { selectChosenFlight } from '../plahim/flightsSlice';
 import { selectUser } from '../plahim/userSlice';
 
 const TicketFinal = () => {
-    const dispatch = useDispatch()
     const nav =useNavigate()
     const flight = useSelector(selectChosenFlight)
     const user = useSelector(selectUser)
     const customer = useSelector(selectCustomer)
 
-const chekC=async()=>{
-    if(customer===null){
-        let token = localStorage.getItem('token')
-        axios.get(`https://my-server-for-tmw.herokuapp.com/customers/get-update/${user.id}`,{
-            headers:{
-            "Content-Type": "application/json",
-            Authorization:"Bearer "+String(token)
-          }}).then((response)=>{
-            let cus = response.data
-            if(cus){ 
-            dispatch(setCustomer(cus));
-            localStorage.setItem('customer',JSON.stringify(cus))
-    }})}}
-    chekC();
-
   const createTicket = async ()=>{
     let token = localStorage.getItem('token')
-     let ticket = await fetch('https://my-server-for-tmw.herokuapp.com/tickets/',{
+     let ticket = await fetch('http://127.0.0.1:8000/tickets/',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +25,7 @@ const chekC=async()=>{
    })});
    let response = await ticket.json();
    if(response.message === 'CREATED'){
-    nav('/myTickets')
+    nav('/')
    }else{
     alert(response.message)
     nav('/')

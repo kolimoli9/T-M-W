@@ -10,7 +10,6 @@ import Register from "./components/pages/Register";
 import Flights from "./components/pages/Flights";
 import CustomerInput from "./components/CustomerInput";
 import TicketFinal from "./components/TicketFinal";
-import MyTickets from "./components/pages/MyTickets";
 import ShowFlights from './components/ShowFlights';
 import Airline from './components/pages/staff/Airline';
 import Admin from './components/pages/staff/Admin'
@@ -18,25 +17,24 @@ const App = ()=> {
 
     return (
 
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="login" element={<Login />} />
-              <Route path="contact" element={<Contact />} />
-              <Route path="forgot-pwd" element={<Forgot />} />
-              <Route path="register" element={<Register />} />
-              <Route path="flights" element={<Flights />} />
-              <Route path="customerInfo" element={<CustomerInput />} />
-              <Route path="ticketFinal" element={<TicketFinal />} />
-              <Route path="myTickets" element={<MyTickets></MyTickets>} />
-              <Route path="showFlights" element={<ShowFlights />} />
-              <Route path="airline" element={<Airline />} />
-              <Route path="admin" element={<Admin />} />
-              <Route path="*" element={<NoPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />}/>
+            <Route path="showFlights" element={<ShowFlights />}/>
+            <Route path="login" element={<Login />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="forgot-pwd" element={<Forgot />} />
+            <Route path="register" element={<Register />} />
+            <Route path="flights" element={<Flights />}/>
+            <Route path="flights/customerInfo" element={<CustomerInput />} />
+            <Route path="flights/ticketFinal" element={<TicketFinal />} />
+            <Route path="airline" element={<Airline />} />
+            <Route path="admin" element={<Admin />} />
+            <Route path="*" element={<NoPage />} />
+          </Route>
+      </Routes>
+    </BrowserRouter>
 
     );
   };

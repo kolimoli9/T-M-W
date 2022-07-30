@@ -8,7 +8,7 @@ const CustomerInput = () => {
    const nav =useNavigate()
 
    const createCustomer=async()=>{
-    let Customer =await fetch(`https://my-server-for-tmw.herokuapp.com/customers/`,{
+    let Customer =await fetch(`http://127.0.0.1:8000/customers/`,{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ const CustomerInput = () => {
     })});
     let response = await Customer.json();
     if(response.message ==='CREATED'){
-         nav("/ticketFinal")
+         nav("ticketFinal")
     }else{
         alert(' Something went wrong ')
         nav('/')

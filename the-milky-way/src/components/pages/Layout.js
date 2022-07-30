@@ -3,21 +3,22 @@ import { Link, Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setTheUser} from '../../plahim/userSlice'
 import { setCustomer } from '../../plahim/customerSlice';
-import { selectFlights, setFlights } from '../../plahim/flightsSlice';
+import { setFlights } from '../../plahim/flightsSlice';
+import axios from 'axios';
 const Layout=()=> { 
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
-  const flights = useSelector(selectFlights)
 
-  useEffect(()=> async ()=>{
-    if(flights.length===0){
-      let request = await fetch("https://my-server-for-tmw.herokuapp.com/getflights/");
+  useEffect(()=>{
+    async function fetchData() {
+      let request = await fetch("http://127.0.0.1:8000/getflights/");
       let response = await request.json();
+      console.log(response)
       dispatch(setFlights((response)));
-    }else{
-      console.log('useEffect Layout')
     }
-  })
+     fetchData()},[dispatch])
+
+        
   
   window.onload=()=>{
     let savedUser = localStorage.getItem('user')
@@ -58,7 +59,7 @@ const Layout=()=> {
               {user ? (
                 <>
                   <li className="nav-item">
-                    <Link className="btn btn-dark" to="/myTickets" style={{ color: 'green' }}>{user.email}</Link>
+                    <Link className="btn btn-dark" to="/myTickets" style={{ color: 'green' }}>{user.email} </Link>
                   </li>
                   <li className="nav-item ">
                     <Link className="btn btn-dark" to="/" style={{ color: 'red' }} onClick={() => {

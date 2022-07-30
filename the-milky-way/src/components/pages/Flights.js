@@ -1,10 +1,10 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { selectCustomer, setCustomer } from '../../plahim/customerSlice';
 import {  selectFlights, setChosenFlight, setFlights } from '../../plahim/flightsSlice';
 import { selectUser } from '../../plahim/userSlice';
-import axios from 'axios';
 const Flights = () => {
 
   const nav =useNavigate()
@@ -14,30 +14,26 @@ const Flights = () => {
     const flights=useSelector(selectFlights)
     const dispatch = useDispatch()
    
+useEffect(()=>{
+  async function fetchData() {
+    let request = await fetch("http://127.0.0.1:8000/getflights/");
+    let response = await request.json();
+    console.log(response)
+    dispatch(setFlights((response)));
+  }
     
-    const getCustomer = async(flight)=>{
+    },[flights,dispatch])
+    
+    const getCustomer = (flight)=>{
       if(customer===null){
-          let token = localStorage.getItem('token')
-          axios.get(`https://my-server-for-tmw.herokuapp.com/customers/get-update/${user.id}`,{
-              headers:{
-                "Content-Type": "application/json",
-                Authorization:"Bearer "+String(token)
-              }}).then((response)=>{
-                let cus = response.data
-                if(cus){ 
-                dispatch(setCustomer(cus));
-                localStorage.setItem('customer',JSON.stringify(cus))
-                dispatch(setChosenFlight(flight));
-                nav("/ticketFinal")
-              }else{
-                dispatch(setChosenFlight(flight));
-                nav('/customerInfo')
-              }
-              })
-            }else{
-              console.log('Already fetched customer')
-              nav('/ticketFinal')
-            }
+        dispatch(setChosenFlight(flight));
+        nav('customerInfo')
+        
+        }
+      else{
+        dispatch(setChosenFlight(flight));
+        nav("ticketFinal")
+      }
         };
     
     const orderNow = (flight)=>{
@@ -48,8 +44,25 @@ const Flights = () => {
           getCustomer(flight); 
     }
   };
-
-getFlights();
+  useEffect(() => {
+    async function fetchCustomer(){
+    let token = localStorage.getItem('token')
+            axios.get(`http://127.0.0.1:8000/customers/get-update/${user.id}`,{
+                headers:{
+                  "Content-Type": "application/json",
+                  Authorization:"Bearer "+String(token)
+                }}).then((response)=>{
+          try{
+            dispatch(setCustomer(response.data))
+            console.log(response.data)
+          }catch(error){
+            console.log(error)
+          }})
+    }
+    if(user){
+      fetchCustomer()
+    }
+   },[user,dispatch])
 
  
   return (
