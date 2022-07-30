@@ -1,44 +1,43 @@
 import { React, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {  selectShowFlights, setShowFlights } from "../../plahim/flightsSlice";
+import {  selectFlights, selectShowFlights, setShowFlights } from "../../plahim/flightsSlice";
 import axios from 'axios';
 
 
 const Home = () => {
     const nav = useNavigate()
     const dispatch = useDispatch()
+    const flights = useSelector(selectFlights)
     const ShowFlights = useSelector(selectShowFlights)
 
-    const [From, setFrom] = useState("")
-    const [To, setTo] = useState("")
+    const [From, setFrom] = useState("ISRAEL")
+    const [To, setTo] = useState("ENGLAND")
     const [Depart, setDepart] = useState("")
     const [CLASS, setCLASS] = useState(1)
     const [adults, setAdults] = useState(1)
     const ChosenFlights = []
 
     const showFlights= async ()=>{
-           axios.get("https://my-server-for-tmw.herokuapp.com/getflights/").then((response)=>{
-            if(response.status===200){
-                let allFlights = response.data
-                allFlights.forEach(flight => {
-                    if(flight.from === From && flight.too===To){
-                        ChosenFlights.push(flight)
-                    }if(flight.from !== From && flight.too===To){
-                        ChosenFlights.push(flight)
-                    }if(flight.dep_date===Depart){
-                        ChosenFlights.push(flight)
-                    }
-                  })
-                  if(ChosenFlights.length===0){
-                    alert('No Flights Under Those Parameters Exist..')
-                    nav('/')
-                  }else{
-                    dispatch(setShowFlights(ChosenFlights))
-                    nav('/showFlights')
-                  }
-                  console.log(ChosenFlights)
-            }})};
+        flights.forEach(flight => {
+            console.log(flight)
+            if(flight.from === From && flight.too===To){
+                ChosenFlights.push(flight)
+            }if(flight.from !== From && flight.too===To){
+                ChosenFlights.push(flight)
+            }if(flight.dep_date===Depart){
+                ChosenFlights.push(flight)
+            }
+            })
+            if(ChosenFlights.length===0){
+            alert('No Flights Under Those Parameters Exist..')
+            nav('/')
+            }else{
+            dispatch(setShowFlights(ChosenFlights))
+            nav('/showFlights')
+            }
+            console.log(ChosenFlights)
+            };
           
 
 

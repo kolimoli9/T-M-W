@@ -25,7 +25,7 @@ const TicketFinal = () => {
    })});
    let response = await ticket.json();
    if(response.message === 'CREATED'){
-    nav('/')
+    nav('/myTickets')
    }else{
     alert(response.message)
     nav('/')

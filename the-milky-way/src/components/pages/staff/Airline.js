@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {  useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { selectUser } from '../../../plahim/userSlice';
 import { selectChosenFlight, selectFlights, setChosenFlight, setFlights } from '../../../plahim/flightsSlice';
 import axios from 'axios';
@@ -8,7 +7,6 @@ import axios from 'axios';
 const Airline = () => {
 // Utils
   const dispatch=useDispatch()
-  const nav=useNavigate()
   const [update, setUpdate] = useState(false)
   const [postFlight, setPostFlight] = useState(false)
 // Selectors
@@ -96,7 +94,7 @@ const Airline = () => {
     });
     setAirlineFlights(tempFlights);
   }else{
-    console.log('useEffect Run')
+    console.log(' Airline useEffect Run+')
   }
   },[AirlineFlights,flights,user]) 
 

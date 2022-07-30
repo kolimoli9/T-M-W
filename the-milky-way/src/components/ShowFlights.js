@@ -20,7 +20,7 @@ const reset = ()=>{
 const getCustomerS = async(flight)=>{
   if(customer===null){
     let token = localStorage.getItem('token')
-    axios.get(`https://my-server-for-tmw.herokuapp.com/customers/get-update/${user.id}`,{
+    axios.get(`http://127.0.0.1:8000/customers/get-update/${user.id}`,{
       headers:{
         "Content-Type": "application/json",
         Authorization:"Bearer "+String(token)
@@ -29,16 +29,15 @@ const getCustomerS = async(flight)=>{
             if(cus){ 
             dispatch(setCustomer(cus));
             dispatch(setChosenFlight(flight));
-            nav("/ticketFinal")
+            nav("/flights/ticketFinal")
             }else{
             dispatch(setChosenFlight(flight));
-            nav('/customerInfo')
+            nav('/flight/customerInfo')
             }
           })
   }else{
-        console.log('Already fetched customer')
         dispatch(setChosenFlight(flight));
-        nav("/ticketFinal")
+        nav("/flights/ticketFinal")
         }
 };
 

@@ -18,7 +18,6 @@ useEffect(()=>{
   async function fetchData() {
     let request = await fetch("http://127.0.0.1:8000/getflights/");
     let response = await request.json();
-    console.log(response)
     dispatch(setFlights((response)));
   }
     
@@ -54,7 +53,6 @@ useEffect(()=>{
                 }}).then((response)=>{
           try{
             dispatch(setCustomer(response.data))
-            console.log(response.data)
           }catch(error){
             console.log(error)
           }})

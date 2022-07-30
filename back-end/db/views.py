@@ -352,4 +352,23 @@ def customerTickets(r, id=-1):
     if r.method == 'DELETE':
         temp = Tickets.objects.get(customer=id)
         temp.delete()
-        return JsonResponse({'message':'DELETED'})        
+        return JsonResponse({'message':'DELETED'}) 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def prettyticket(req,id):
+    newTickets = []
+    customer = Customers.objects.get(id=id)
+    tickets = Tickets.objects.filter(customer=customer.id).values()
+    for ticket in tickets:
+        flight = Flights.objects.get(id=ticket['flight_id'])
+        newTicket = {
+            'id':ticket['id'],
+            'name':customer.first_name,
+            'departure':str(flight.origin_country),
+            'landing' :str(flight.destenation_country),
+            'time': f'dep :{flight.dep_time} > arv :{flight.arrival_time}'
+        }
+        newTickets.append(newTicket)
+
+    return JsonResponse({"tickets":newTickets},safe=False)               
