@@ -36,8 +36,10 @@ const Login = () => {
 				last_name:decodedToken.last_name,
 			}
 			if(decodedToken.airline){
-				newUser['airline']=decodedToken.airline
-			}
+				newUser['airline']=decodedToken.airline}
+			if(decodedToken.is_admin){
+				newUser['is_admin']=decodedToken.is_admin
+			}	
             if(Checkbox){localStorage.setItem('user',JSON.stringify(newUser))};
             dispatch(setTheUser(newUser));
 			nav("/")

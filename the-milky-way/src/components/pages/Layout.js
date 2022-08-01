@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setTheUser} from '../../plahim/userSlice'
 import { setCustomer } from '../../plahim/customerSlice';
 import { setFlights } from '../../plahim/flightsSlice';
-import axios from 'axios';
 const Layout=()=> { 
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
@@ -13,7 +12,6 @@ const Layout=()=> {
     async function fetchData() {
       let request = await fetch("http://127.0.0.1:8000/getflights/");
       let response = await request.json();
-      console.log(response)
       dispatch(setFlights((response)));
     }
      fetchData()},[dispatch])

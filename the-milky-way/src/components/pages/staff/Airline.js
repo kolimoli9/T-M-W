@@ -3,6 +3,7 @@ import {  useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../../../plahim/userSlice';
 import { selectChosenFlight, selectFlights, setChosenFlight, setFlights } from '../../../plahim/flightsSlice';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const Airline = () => {
 // Utils
@@ -97,7 +98,7 @@ const Airline = () => {
     console.log(' Airline useEffect Run+')
   }
   },[AirlineFlights,flights,user]) 
-
+if(user.airline){
   return (
     <div>
     <div className='shadow-lg p-3 mb-5 bg-body rounded'>
@@ -404,6 +405,15 @@ const Airline = () => {
                 ):('')}
         </div>
   )
-}
+}else{
+    return(
+        <div style={{position:'absolute',left:'40%',top:'40%'}}>
+      <Link className='btn btn-danger'style={{color:'black'}} to={'/'}>Unauthorized</Link>
+      <br></br>
+      <br></br>
+      <h1 className='text text-danger' style={{paddingLeft:80}}>401</h1>
+    </div>
+    )
+}}
 
 export default Airline

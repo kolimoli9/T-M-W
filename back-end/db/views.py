@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.contrib.auth.hashers import make_password, check_password
 from django.core import mail
 from django.contrib.auth.models import User
-from .utils import GETS,ALLS
+from .utils import GETS
 
 
 
@@ -32,11 +32,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         if user.is_staff:
             try:airline = Airlines.objects.get(user=user.id);token['airline'] = airline.airline_name
             except:pass
-             
+        if user.is_superuser:token['is_admin'] = user.is_superuser     
         return token
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
-
 
 
 
@@ -115,29 +114,51 @@ def users(request,id=-1):
             user= User.objects.get(id = id)
             return JsonResponse(list(user), safe=False)
         else: 
+            sUsers = []
             users = User.objects.all()
-            serializer = UserSerializer(users, many=True)
-            return JsonResponse(serializer.data,safe=False) 
+            for u in users:
+                user = {
+                    "id":u.id,
+                    "username":u.username,
+                    "first_name":u.first_name,
+                    "last_name":u.last_name,
+                    "email":u.email,
+                    "is_staff":u.is_staff,
+                    "is_superuser":u.is_superuser}
+                try:airline=Airlines.objects.get(user=u.id);user['airline'] = airline.airline_name
+                except:pass
+                sUsers.append(user)          
+            return JsonResponse(sUsers,safe=False) 
     
     if request.method == 'DELETE': 
         temp= User.objects.get(id = id)
         temp.delete()
-        return JsonResponse({'DELETE': id})
+        return JsonResponse({'message':'User Deleted Successfuly !'})
     
     if request.method == 'PUT': 
         temp=User.objects.get(id = id)
-        try:temp.username =request.data['username'] 
+        try:
+            UserName = request.data['username']
+            if UserName != '':
+              temp.username = UserName
         except:pass
-        try:temp.password =make_password(request.data['password'] )
+        try:
+            EmailUser = request.data['email']
+            if EmailUser!='':
+                temp.email =EmailUser
         except:pass
-        try:temp.email =request.data['email']
+        try:temp.is_staff =request.data['is_staff']
         except:pass
-        try:temp.first_name =request.data['first_name']
-        except:pass
-        try:temp.last_name =request.data['last_name']
+        try:temp.is_superuser =request.data['is_superuser']
         except:pass
         temp.save()
-        return JsonResponse({'PUT': id,'name':temp.username})
+        try:
+            airlineName = request.data['ariline_name']
+            airline = Airlines.objects.get(airline_name = airlineName)
+            airline.user = temp.id
+            airline.save()
+        except:pass    
+        return JsonResponse({'message': f'{temp.username} - Changes Saved !'})
 
 ###########
 #CUSTOMERS#
