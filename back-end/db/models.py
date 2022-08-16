@@ -56,7 +56,15 @@ class CustomerService(models.Model):
     _reply_sent = models.DateTimeField()
 
 
-
+class PermissionRequests(models.Model):
+    _user_id = models.IntegerField()
+    _first_name = models.CharField(max_length=20)
+    _last_name = models.CharField(max_length=20)
+    _email = models.CharField(max_length=50)
+    _permission_requested = models.BooleanField()
+    _permission_denied = models.IntegerField()
+    created = models.DateTimeField(auto_now=True,auto_created=True)
+    
 
 
 

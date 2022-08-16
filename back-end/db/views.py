@@ -2,7 +2,7 @@ from datetime import *
 from random import choice
 from django.conf import settings
 from django.http import  JsonResponse
-from .models import Countries, Airlines, CustomerService, Test, Customers, Flights, Tickets 
+from .models import Countries, Airlines, CustomerService, PermissionRequests, Test, Customers, Flights, Tickets 
 from rest_framework.decorators import api_view,permission_classes
 from .Serializers import AirlinesSerializer,CountriesSerializer,CustomersSerializer,FlightsSerializer,TicketsSerializer,UserSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -72,14 +72,14 @@ def forgot_password(r):
         try:
             user = User.objects.get(email=email)
         except:
-            return JsonResponse({'Error': 'This User Is Not In The System!'})
+            return JsonResponse({'message': 'Error 404 ,This User Is Not In The System!'})
         randompwd = ''.join([choice('1234567890qwertyuiopasdfghjklzxcvbnm') for i in range(8)])
         user.password = make_password(randompwd)
         user.save()
         connection = mail.get_connection()
         SendEmail =mail.EmailMessage(
                     'FORGOT PASSWORD',
-                    f'Hi there {user.name},  \n We heard that you`ve misplaced your password :) \n your new password: {randompwd}',
+                    f'Hi there {user.first_name},  \n We heard that you`ve misplaced your password :) \n your new password: {randompwd}',
                     settings.DEFAULT_FROM_EMAIL,
                     [email],
                     connection=connection,
@@ -103,8 +103,23 @@ def addusers(r):
         return JsonResponse({'message':'User Is Already In The System!'},safe=False)
     except:
         pass    
-    User.objects.create(username=r.data['username'],password=make_password(r.data['password']),email=r.data['email'],is_staff = r.data['is_staff'],first_name=r.data['first_name'],last_name=r.data['last_name'])
-    return JsonResponse({'message':'Welcome!\n U can Login Now !'},safe=False)
+    newUser = User.objects.create(username=r.data['username'],password=make_password(r.data['password']),email=r.data['email'],is_staff = r.data['is_staff'],first_name=r.data['first_name'],last_name=r.data['last_name'])
+    try:
+        staffRequest = r.data['staff_requested']
+        if staffRequest:
+            PermissionRequests.objects.create(_user_id =newUser.id,_first_name=newUser.first_name,_last_name =newUser.last_name ,_email =newUser.email ,_permission_requested = True,_permission_denied = 0) 
+            connection = mail.get_connection()
+            SendEmail =mail.EmailMessage(
+                    'PERMISSION REQUEST',
+                    f'User  {newUser.first_name} {newUser.last_name}  has requested AirlineUser permissions. \n To grant/deny it, please login in https://tmw-my-server.azurewebsites.net/login \n User email for further inquiries: {newUser.email}',
+                    settings.DEFAULT_FROM_EMAIL,
+                    ['kolimoli9@gmail.com'],
+                    connection=connection,
+                )  
+            SendEmail.send()
+            connection.close()
+    except:pass        
+    return JsonResponse({'message':'Welcome!\n U Can Login Now!'},safe=False)
 
 @api_view(['GET','DELETE','PUT'])
 @permission_classes([IsAuthenticated,IsAdminUser])
@@ -153,10 +168,12 @@ def users(request,id=-1):
         except:pass
         temp.save()
         try:
-            airlineName = request.data['ariline_name']
+            airlineName = request.data['airline_name']
             airline = Airlines.objects.get(airline_name = airlineName)
-            airline.user = temp.id
-            airline.save()
+            oau = User.objects.get(id=airline.user.id);oau.is_staff = False;oau.save()
+            airline.user = temp
+            airline.save() 
+            
         except:pass    
         return JsonResponse({'message': f'{temp.username} - Changes Saved !'})
 
